@@ -32,7 +32,6 @@ public class ProductApiController {
 	private final ProductService productService;
 	private final ConversionService conversionService;
 
-
 	@GetMapping
 	public ResponseEntity<List<ProductRs>> findProducts() {
 		List<Product> products = productService.findProductAll();

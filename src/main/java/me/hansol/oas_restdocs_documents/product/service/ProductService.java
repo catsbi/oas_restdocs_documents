@@ -16,7 +16,7 @@ public class ProductService {
 
 	public Product findProduct(Long id) {
 		return productRepository.findById(id)
-			.orElseThrow(()-> new NoSuchElementException("존재하지 않는 상품 아이디 입니다."));
+			.orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품 아이디 입니다."));
 	}
 
 	public Product save(Product product) {
