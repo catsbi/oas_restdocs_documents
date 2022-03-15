@@ -15,8 +15,13 @@
     <description>oas_restdocs_documents</description>
     <properties>
         <java.version>11</java.version>
-        <restdocs-api-spec.version>0.10.0</restdocs-api-spec.version>
-        <restdocs-spec.version>0.19</restdocs-spec.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <asciidoctor.version>2.2.2</asciidoctor.version>
+        <restdocs-api-spec.version>0.16.0</restdocs-api-spec.version>
+        <restdocs-spec.version>0.21</restdocs-spec.version>
     </properties>
 
 
@@ -32,10 +37,16 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -53,27 +64,19 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- swagger starter -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-boot-starter</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>3.0.0</version>
-        </dependency>
-
-        <!-- REST Assured -->
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>4.5.1</version>
+            <groupId>com.epages</groupId>
+            <artifactId>restdocs-api-spec</artifactId>
+            <version>${restdocs-api-spec.version}</version>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.epages</groupId>
+            <artifactId>restdocs-api-spec-mockmvc</artifactId>
+            <version>${restdocs-api-spec.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
@@ -82,7 +85,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>1.5.8</version>
+                <version>${asciidoctor.version}</version>
                 <executions>
                     <execution>
                         <id>generate-docs</id>
@@ -91,8 +94,17 @@
                             <goal>process-asciidoc</goal>
                         </goals>
                         <configuration>
+                            <!--suppress MavenModelInspection -->
+                            <skip>${skipTests}</skip>
                             <backend>html</backend>
                             <doctype>book</doctype>
+                            <attributes>
+                                <project-version>${project.version}</project-version>
+                                <snippets>${project.build.directory}/generated-snippets</snippets>
+                            </attributes>
+                            <sourceDirectory>${basedir}/src/docs</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/classes/static/docs</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
@@ -115,6 +127,29 @@
                         </exclude>
                     </excludes>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>io.github.berkleytechnologyservices</groupId>
+                <artifactId>restdocs-spec-maven-plugin</artifactId>
+                <version>${restdocs-spec.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <!--suppress MavenModelInspection -->
+                            <skip>${skipTests}</skip>
+                            <specification>OPENAPI_V3</specification>
+                            <name>[OAS + Swagger] Prototype</name>
+                            <description>restDocs로 생성되는 API 문서를 OAS(OpenApi Specification)을 이용해 Swagger로 표출하기</description>
+                            <format>JSON</format>
+                            <host>localhost:8080</host>
+                            <outputDirectory>${project.build.directory}/classes/static/swagger-ui/.</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
