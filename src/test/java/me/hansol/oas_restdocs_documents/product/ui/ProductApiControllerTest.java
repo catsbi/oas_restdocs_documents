@@ -236,7 +236,7 @@ class ProductApiControllerTest {
 			@DisplayName("400 상태코드와 예외 내용을 반환합니다.")
 			@ParameterizedTest
 			@ArgumentsSource(InvalidProductRqProvider.class)
-			void saveProductWithInvalidRq(ProductSaveRq invalidProductRq, String errorMessage) throws Exception {
+			void saveProductWithInvalidRq(ProductSaveRq invalidProductRq,String identifier,  String errorMessage) throws Exception {
 				mockMvc.perform(post(PRODUCT_API)
 						.contentType(APPLICATION_JSON_VALUE)
 						.content(objectMapper.writeValueAsBytes(invalidProductRq))
@@ -244,7 +244,7 @@ class ProductApiControllerTest {
 					).andExpect(status().isBadRequest())
 					.andExpect(jsonPath("status").value(HttpStatus.BAD_REQUEST.toString()))
 					.andExpect(jsonPath("message").value(errorMessage))
-					.andDo(document("상품 저장",
+					.andDo(document("유효하지 않은 상품 저장 정보- "+identifier,
 						resource(ResourceSnippetParameters.builder()
 							.tag(PRODUCT_TAG)
 							.description("유효하지 않은 상품정보로 상품 저장")
