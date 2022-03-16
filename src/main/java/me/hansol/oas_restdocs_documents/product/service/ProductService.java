@@ -12,11 +12,12 @@ import me.hansol.oas_restdocs_documents.product.domain.ProductRepository;
 @Service
 @RequiredArgsConstructor
 public class ProductService {
+	public static final String INVALID_PRODUCT_ID_MESSAGE = "존재하지 않는 상품 아이디 입니다.";
 	private final ProductRepository productRepository;
 
 	public Product findProduct(Long id) {
 		return productRepository.findById(id)
-			.orElseThrow(() -> new NoSuchElementException("존재하지 않는 상품 아이디 입니다."));
+			.orElseThrow(() -> new NoSuchElementException(INVALID_PRODUCT_ID_MESSAGE));
 	}
 
 	public Product save(Product product) {

@@ -1,22 +1,29 @@
 package me.hansol.oas_restdocs_documents.product.domain;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class ProductInMemoryRepository implements ProductRepository {
+	public static final String INVALID_PRODUCT_PARAMETER = "유효하지 않은 상품 정보입니다.";
+
 	private static final ProductRepository instance = new ProductInMemoryRepository();
-	public static final Map<Long, Product> store = new HashMap<>();
+	private static final Map<Long, Product> store = new ConcurrentHashMap<>();
 	private static Long sequence = 0L;
 
 	public ProductRepository getInstance() {
 		return instance;
+	}
+
+	public synchronized void clear() {
+		sequence = 0L;
+		store.clear();
 	}
 
 	@Override
@@ -61,6 +68,9 @@ public class ProductInMemoryRepository implements ProductRepository {
 
 	@Override
 	public Product delete(Product product) {
-		return null;
+		if (Objects.isNull(product) || Objects.isNull(product.getId())) {
+			throw new IllegalArgumentException(INVALID_PRODUCT_PARAMETER);
+		}
+		return store.remove(product.getId());
 	}
 }
