@@ -18,13 +18,13 @@ public class InvalidProductRqProvider implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
 
 		ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
-		messageSource.setBasename("errors");
-		messageSource.setCacheSeconds(5);
+		messageSource.addBasenames("errors");
+		messageSource.setDefaultEncoding("UTF-8");
 
 		return Stream.of(
-			Arguments.of(new ProductSaveRq(1500L, ""),
+			Arguments.of(new ProductSaveRq(1500L, ""), "상품명",
 				messageSource.getMessage("product.name.notblank", EMPTY_ARR, LOCALE)),
-			Arguments.of(new ProductSaveRq(-1000L, "수박"),
+			Arguments.of(new ProductSaveRq(-1000L, "수박"), "상품 가격",
 				messageSource.getMessage("product.price.min", EMPTY_ARR, LOCALE))
 		);
 	}
